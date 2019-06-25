@@ -2,3 +2,9 @@
 *.jl.*.cov
 *.jl.mem
 deps/deps.jl
+1000*
+TarDatasets
+reformat.fasta
+error.fasta
+OUTPUT
+DATA_OUTPUT
