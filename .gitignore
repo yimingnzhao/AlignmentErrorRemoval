@@ -8,3 +8,4 @@ reformat.fasta
 error.fasta
 OUTPUT
 DATA_OUTPUT
+generatedFiles*

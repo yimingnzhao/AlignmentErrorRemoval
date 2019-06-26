@@ -1,5 +1,6 @@
 import random
 import sys
+import os
 
 RNA_DATA = ["A", "U", "G", "C"];
 
@@ -98,7 +99,7 @@ Return:
 """
 def getLastCharInRange( sequence, length ):
     char_count = 0;
-    current_index = len(sequence) - 1;
+    current_index = len(sequence) - 2;
     while char_count < length:
         # Checks if current_index has become negative and exits program if true
         if current_index < 0:
@@ -135,6 +136,26 @@ def setErrSequence( sequence, length ):
             sequence = sequence[0:current_pos] + rand_segment + sequence[(current_pos + 1):];
         current_pos += 1;
     return sequence;
+
+
+"""
+Checks if the last char is a newline and adds a newline if not
+
+Args:
+    path (str): the path to the file
+
+Return:
+    void
+"""
+def addNewlineToEOF( path ):
+    with open(path, 'r+') as f:
+        f.seek(0, os.SEEK_END)  # go at the end of the file
+        f.seek(f.tell() - 1, os.SEEK_SET);
+        if f.read(1) != '\n':
+            # add missing newline if not already present
+            f.write('\n')
+            f.flush()
+            f.seek(0)
 
 
 # The dataset file
@@ -196,3 +217,5 @@ with open( reformat_file, "r" ) as file_object:
             error_f.write( line );
 f.close();
 error_f.close();
+addNewlineToEOF(reformat_file);
+addNewlineToEOF(error_file);

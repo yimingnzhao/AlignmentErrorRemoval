@@ -15,6 +15,7 @@ def isBeginAlignment( line ):
         return True
     return False
 
+
 """
 Gets the FP, FN, TP, and TN of the current line
 
@@ -37,15 +38,15 @@ def getLineErrorRates( correct, error, output ):
         error_char = error[x];
         correct_char = correct[x];
         if output_char == 'X':
-            if not error_char == correct_char:
-                tp = tp + 1;
-            else:
+            if error_char == correct_char:
                 fp = fp + 1;
-        else:
-            if not output_char == correct_char:
-                fn = fn + 1;
             else:
+                tp = tp + 1;
+        else:
+            if output_char == correct_char:
                 tn = tn + 1;
+            else:
+                fn = fn + 1;
     return (fp, fn, tp, tn);
         
 
@@ -73,7 +74,7 @@ true_negative = 0;
 correct_line = correct_f.readline();
 output_line = output_f.readline();
 error_line = error_f.readline();
-while correct_line:
+while correct_line and error_line and output_line:
     line_stats = getLineErrorRates( correct_line, error_line, output_line );
     false_positive += line_stats[0];
     false_negative += line_stats[1];
@@ -82,7 +83,8 @@ while correct_line:
     correct_line = correct_f.readline();
     error_line = error_f.readline();
     output_line = output_f.readline();
-
+if correct_line or error_line or output_line:
+    print("Error: Not all files have the same number of lines");
 correct_f.close();
 error_f.close();
 output_f.close();
