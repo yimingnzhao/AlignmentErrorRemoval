@@ -59,30 +59,53 @@ for (( i=0; i<${#fp_arr[@]}; i++ )); do
 	fi
 done
 
-# Calculates FPR and FNR
-echo "Calculating false positive and false negative rates..."
+# Calculates error rates
+echo "Calculating error rates..."
 FPR_arr=(0)
-FNR_arr=(0)
+TPR_arr=(0)
+recall_arr=(0)
+precision_arr=(0)
 for ((i=0; i<${#fp_results[@]}; i++ )); do
 	FP=`echo "print( (${fp_results[$i]}) / (${fp_results[$i]} + ${tn_results[$i]}) )" | python`
-	FN=`echo "print( (${fn_results[$i]}) / (${tp_results[$i]} + ${fn_results[$i]}) )" | python`
+	TP=`echo "print( (${tp_results[$i]}) / (${tp_results[$i]} + ${fn_results[$i]}) )" | python`
+	recall=`echo "print( (${tp_results[$i]}) / (${tp_results[$i]} + ${fn_results[$i]}) )" | python`
+	precision=`echo "print( (${tp_results[$i]}) / (${tp_results[$i]} + ${fp_results[$i]}) )" | python`	
 	FPR_arr+=($FP)
-	FNR_arr+=($FN)
+	TPR_arr+=($TP)
+	recall_arr+=($recall)
+	precision_arr+=($precision)
 done
 
 FPR_arr+=(1)
-FNR_arr+=(1)
+TPR_arr+=(1)
+recall_arr+=(1)
+precision_arr+=(1)
 
 FPR_str=""
-FNR_str=""
+TPR_str=""
+recall_str=""
+precision_str=""
 
 for i in ${FPR_arr[@]}; do
 	FPR_str="$FPR_str $i"
 done
 
-for i in ${FNR_arr[@]}; do
-	FNR_str="$FNR_str $i"
+for i in ${TPR_arr[@]}; do
+	TPR_str="$TPR_str $i"
+done
+
+for i in ${recall_arr[@]}; do
+	recall_str="$recall_str $i"
+done
+
+for i in ${precision_arr[@]}; do
+	precision_str="$precision_str $i"
 done
 
 
-python plotROC.py "$FPR_str" "$FNR_str"
+echo "FPR: $FPR_str"
+echo "TPR: $TPR_str"
+echo "Recall: $recall_str"
+echo "Precision: $precision_str"
+
+#python plotROC.py "$FPR_str" "$FNR_str"

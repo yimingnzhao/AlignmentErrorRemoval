@@ -21,11 +21,12 @@ echo > $output_file
 echo "Variable Error Length" >> $output_file
 echo >> $output_file
 echo "Now running tests with variable error length..."
-for subdir in ./10000/*; do
-	echo "$subdir" >> $output_file
-	python chooseAlignments.py "$subdir/model/true.fasta" $default_choose_num_aln
-	for i in "${err_len_multiplier_vals[@]}"; do
-		echo "$i Error Length" >> $output_file
+
+for i in "${err_len_multiplier_vals[@]}"; do
+	echo "$i Error Length" >> $output_file
+	for subdir in ./10000/*; do
+		echo "$subdir" >> $output_file
+		python chooseAlignments.py "$subdir/model/true.fasta" $default_choose_num_aln
 		for (( j=0; j<10; j++ )); do
 			echo "Running $subdir, Test No. $j..."
 			python generateErrorModel.py RNASim_$default_choose_num_aln.fasta $default_num_err_aln `echo "print(int($i*$default_k))" | python ` 2> /dev/null
@@ -49,11 +50,11 @@ echo > $output_file
 echo "Variable Error Alignments" >> $output_file
 echo >> $output_file
 echo "Now running tests with variable error alignments..."
-for subdir in ./10000/*; do
-	echo "$subdir" >> $output_file
-	python chooseAlignments.py "$subdir/model/true.fasta" $default_choose_num_aln
-	for i in "${num_err_aln_vals[@]}"; do
-		echo "$i Error Alignments" >> $output_file
+for i in "${num_err_aln_vals[@]}"; do
+	echo "$i Error Alignments" >> $output_file
+	for subdir in ./10000/*; do
+		echo "$subdir" >> $output_file
+		python chooseAlignments.py "$subdir/model/true.fasta" $default_choose_num_aln
 		for (( j=0; j<10; j++ )); do
 			echo "Running $subdir, Test No. $j..."
 			python generateErrorModel.py RNASim_$default_choose_num_aln.fasta $i `echo "print(int($default_err_len_multiplier*$default_k))" | python ` 2> /dev/null
@@ -77,10 +78,11 @@ echo > $output_file
 echo "Variable Value of K" >> $output_file
 echo >> $output_file
 echo "Now running tests with variable values of K..."
-for subdir in ./10000/*; do
-	echo "$subdir" >> $output_file
-	python chooseAlignments.py "$subdir/model/true.fasta" $default_choose_num_aln
-	for i in "${k_vals[@]}"; do
+for i in "${k_vals[@]}"; do
+	echo "$i K Value" >> $output_file
+	for subdir in ./10000/*; do
+		echo "$subdir" >> $output_file
+		python chooseAlignments.py "$subdir/model/true.fasta" $default_choose_num_aln
 		for (( j=0; j<10; j++ )); do
 			echo "Running $subdir, Test No. $j..."
 			python generateErrorModel.py RNASim_$default_choose_num_aln.fasta $i `echo "print(int($default_err_len_multiplier*$i))" | python ` 2> /dev/null
