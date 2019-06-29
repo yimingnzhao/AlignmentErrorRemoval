@@ -29,8 +29,8 @@ if TPR_arr[0] == "":
     TPR_arr.pop(0)
 
 for i in range(len(FPR_arr)):
-    FPR_arr[i] = round( float(FPR_arr[i]), 6);
-    TPR_arr[i] = round( float(TPR_arr[i]), 6);
+    FPR_arr[i] = round(float(FPR_arr[i]), 6);
+    TPR_arr[i] = round(float(TPR_arr[i]), 6);
 
 
 

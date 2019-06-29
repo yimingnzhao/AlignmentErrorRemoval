@@ -94,4 +94,4 @@ print("FN: " + str(false_negative));
 print("TP: " + str(true_positive));
 print("TN: " + str(true_negative));
 
-sys.stderr.write(str(false_positive) + " " + str(false_negative) + " " + str(true_positive) + " " + str(true_negative))
+sys.stderr.write(str(false_positive) + " " + str(false_negative) + " " + str(true_positive) + " " + str(true_negative + '\n'))

@@ -51,15 +51,15 @@ for node in tree.traverse_postorder(internal=True, leaves=False):
     subtree = tree.extract_subtree(node)
     diameter = subtree.diameter()
     if diameter <= max_diameter and diameter > min_diameter:
-        if max_alignments == subtree.num_nodes(internal=False):
-            trees.append(subtree)
-        if max_alignments < subtree.num_nodes(internal=False):
+        if subtree.num_nodes(internal=False) > max_alignments:
             max_alignments = subtree.num_nodes(internal=False)
             trees = []
             trees.append(subtree)
+        if subtree.num_nodes(internal=False) == max_alignments:
+            trees.append(subtree)
 
 if len(trees) == 0:
-    print("No clades found with the given diameter parameters")
+    print("Error: No clades found with the given diameter parameters");
     sys.exit()
 
 chosen_tree = trees[random.randint(0, len(trees)-1)]
@@ -67,16 +67,13 @@ chosen_tree = trees[random.randint(0, len(trees)-1)]
 chosen_tree_labels = []
 for node in chosen_tree.traverse_postorder(internal=False):
     chosen_tree_labels.append(">" + node.get_label())
-    print(">" + node.get_label())
 
-output_f = open("chosen_alignments_" + str(max_alignments) + ".fasta", "a")
+output_f = open("chosen_alignments.fasta", "a")
 
 count = 0;
 
 f = open(align_file, "r")
 line = f.readline().strip('\n')
-print(len(line))
-print(len(chosen_tree_labels[0]))
 while line:
     if line in chosen_tree_labels:
         output_f.write(line + '\n')

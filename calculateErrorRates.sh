@@ -44,10 +44,10 @@ for (( i=0; i<${#fp_arr[@]}; i++ )); do
 
 	if [ $count == $2 ]; then
 		count=0
-		fp_count=`echo "print($fp_count / $2)" | python`
-		fn_count=`echo "print($fn_count / $2)" | python`
-		tp_count=`echo "print($tp_count / $2)" | python`
-		tn_count=`echo "print($tn_count / $2)" | python`
+		fp_count=`echo "print(int($fp_count / $2))" | python`
+		fn_count=`echo "print(int($fn_count / $2))" | python`
+		tp_count=`echo "print(int($tp_count / $2))" | python`
+		tn_count=`echo "print(int($tn_count / $2))" | python`
 		fp_results+=($fp_count)
 		fn_results+=($fn_count)
 		tp_results+=($tp_count)
@@ -66,10 +66,10 @@ TPR_arr=(0)
 recall_arr=(0)
 precision_arr=(0)
 for ((i=0; i<${#fp_results[@]}; i++ )); do
-	FP=`echo "print( (${fp_results[$i]}) / (${fp_results[$i]} + ${tn_results[$i]}) )" | python`
-	TP=`echo "print( (${tp_results[$i]}) / (${tp_results[$i]} + ${fn_results[$i]}) )" | python`
-	recall=`echo "print( (${tp_results[$i]}) / (${tp_results[$i]} + ${fn_results[$i]}) )" | python`
-	precision=`echo "print( (${tp_results[$i]}) / (${tp_results[$i]} + ${fp_results[$i]}) )" | python`	
+	FP=`echo -e "try:\n\tprint( (${fp_results[$i]}) / (${fp_results[$i]} + ${tn_results[$i]}) )\nexcept ZeroDivisionError:\n\tprint(0)" | python`
+	TP=`echo -e "try:\n\tprint( (${tp_results[$i]}) / (${tp_results[$i]} + ${fn_results[$i]}) )\nexcept ZeroDivisionError:\n\tprint(0)" | python`
+	recall=`echo -e "try:\n\tprint( (${tp_results[$i]}) / (${tp_results[$i]} + ${fn_results[$i]}) )\nexcept ZeroDivisionError:\n\tprint(0)" | python`
+	precision=`echo -e "try:\n\tprint( (${tp_results[$i]}) / (${tp_results[$i]} + ${fp_results[$i]}) )\nexcept ZeroDivisionError:\n\tprint(0)" | python`	
 	FPR_arr+=($FP)
 	TPR_arr+=($TP)
 	recall_arr+=($recall)
@@ -108,4 +108,4 @@ echo "TPR: $TPR_str"
 echo "Recall: $recall_str"
 echo "Precision: $precision_str"
 
-#python plotROC.py "$FPR_str" "$FNR_str"
+python plotROC.py "$FPR_str" "$TPR_str"
