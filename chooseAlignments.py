@@ -74,7 +74,7 @@ if not isInt(sys.argv[2]):
 file_size = getAlignmentsInFile(sys.argv[1]);
 indices = getRandomAlignmentIndices( int(sys.argv[2]), file_size );
 f = open( sys.argv[1], "r" );
-result_f = open( "RNASim_" + sys.argv[2] + ".fasta", "a" );
+result_f = open( "chosen_alignments.fasta", "a" );
 count = 1;
 while len(indices) > 0:
     data = f.readline() + f.readline();

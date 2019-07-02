@@ -51,9 +51,9 @@ def getLineErrorRates( correct, error, output ):
         
 
 
-USAGE = "python getErrorRates.py [correct file] [error file] [correction output file]"
+USAGE = "python getErrorRates.py [correct file] [error file] [correction output file] [description]"
 
-if not len(sys.argv) == 4:
+if not len(sys.argv) == 5:
     print();
     print("\tIncorrect Parameters");
     print("\tUSAGE: " + USAGE);
@@ -62,6 +62,7 @@ if not len(sys.argv) == 4:
 correct = sys.argv[1];
 error = sys.argv[2]
 output = sys.argv[3];
+description = sys.argv[4]
 
 correct_f = open( correct, "r" );
 error_f = open( error, "r" );
@@ -93,5 +94,5 @@ print("FP: " + str(false_positive));
 print("FN: " + str(false_negative));
 print("TP: " + str(true_positive));
 print("TN: " + str(true_negative));
-
-sys.stderr.write(str(false_positive) + " " + str(false_negative) + " " + str(true_positive) + " " + str(true_negative + '\n'))
+description = bytes(description, 'utf-8').decode('unicode_escape');
+sys.stderr.write(str(description) + "\t" + str(false_positive) + "\t" + str(false_negative) + "\t" + str(true_positive) + "\t" + str(true_negative) + "\n")

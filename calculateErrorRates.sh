@@ -108,4 +108,4 @@ echo "TPR: $TPR_str"
 echo "Recall: $recall_str"
 echo "Precision: $precision_str"
 
-python plotROC.py "$FPR_str" "$TPR_str"
+python plotROC.py "$precision_str" "$recall_str"

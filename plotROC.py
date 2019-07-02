@@ -6,8 +6,8 @@ import seaborn as sns
 
 
 def plotROC( fpr, tpr ):
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
+    plt.xlabel('Precision')
+    plt.ylabel('Recall')
     plt.title('Reviever Operating Characteristic (ROC) Curve')
     plt.legend()
     plt.scatter(fpr, tpr, color='blue')

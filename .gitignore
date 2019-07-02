@@ -5,6 +5,7 @@ deps/deps.jl
 1000*
 TarDatasets
 200000
+50000
 reformat.fasta
 error.fasta
 OUTPUT
