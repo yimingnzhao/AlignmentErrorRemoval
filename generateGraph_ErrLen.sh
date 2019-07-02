@@ -28,19 +28,23 @@ echo -e "$aln_file\terror_length_multiplier\trepititions:$repititions\tFP\tFN\tT
 # Loops through the length of errors multiplier array and then the number of repititions for each multiplier
 for (( i=0; i<${#len_of_err_multiplier_arr[@]}; i++ )); do
 	err_len_multiplier=${len_of_err_multiplier_arr[$i]}
+	echo "Choosing alignments from $aln_file for the error length multiplier $err_len_multiplier..."
 	python chooseAlignments.py $aln_file $number_of_alignments
 	for (( j=0; j<$repititions; j++ )); do
 		description="$aln_file\terror_length_multipler:$err_len_multiplier\trepitition:$j"
 		len_of_err=`awk -v k=$value_of_k -v mult=$err_len_multiplier 'BEGIN { printf("%.0f", k * mult); }'`
+		echo "Generating error model for the error length multiplier $err_len_multiplier, repitition $j..."
 		python generateErrorModel.py chosen_alignments.fasta $(($number_of_alignments / $num_err_aln_divisor)) $len_of_err
-		julia correction.jl -k $value_of_k -m X -a N error.fasta > OUTPUT
+		echo "Running the correction algorithm..."
+		julia correction.jl -k $value_of_k -m X -a N error.fasta > OUTPUT 2> /dev/null
+		echo "Getting error rates for the correction algorithm..."
 		python getErrorRates.py reformat.fasta error.fasta OUTPUT $description >> $output_file 2>> $format_output_file
 		rm reformat.fasta error.fasta OUTPUT
 	done
 	rm chosen_alignments.fasta
 done
 
-unix2dos $format_output_file 
+unix2dos $format_output_file 2> /dev/null 
 
 # Generates graph based on output data
 ./calculateErrorRates.sh $output_file $repititions

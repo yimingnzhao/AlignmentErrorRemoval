@@ -3,13 +3,13 @@
 *.jl.mem
 deps/deps.jl
 1000*
-TarDatasets
 200000
 50000
+TarDatasets
+OutputFiles
 reformat.fasta
 error.fasta
 OUTPUT
 DATA_OUTPUT
 generatedFiles*
 RNASim_OUTPUT
-PackageCompiler.jl/builddir/correction.a

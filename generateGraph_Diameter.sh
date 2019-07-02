@@ -30,19 +30,23 @@ echo -e "$aln_file\tmin_diameter:${diameter_ranges[0]}\tmax_diameter:${diameter_
 for (( i=0; i<${#diameter_ranges[@]}-1; i++ )); do
 	min_diameter=${diameter_ranges[$i]}
 	max_diameter=${diameter_ranges[$(($i+1))]}
+	echo "Choosing alignments from $aln_file with diameter range [$min_diameter, $max_diameter]..."
 	python chooseAlignmentsByDistance.py $newick_file $aln_file $min_diameter $max_diameter
 	for (( j=0; j<$repititions; j++ )); do
 		description="$aln_file\tmin_diameter:$min_diameter\tmax_diameter:$max_diameter\trepitition:$j"
 		num_alignments=$((`wc -l < chosen_alignments.fasta` / 2))
+		echo "Generating error model for diameter range [$min_diameter, $max_diameter], repitition $j..."
 		python generateErrorModel.py chosen_alignments.fasta $(($num_alignments / $num_err_aln_divisor)) $(($value_of_k * $len_of_err_multiplier))
-		julia correction.jl -k $value_of_k -m X -a N error.fasta > OUTPUT
+		echo "Running the correction algorithm..."
+		julia correction.jl -k $value_of_k -m X -a N error.fasta > OUTPUT 2> /dev/null
+		echo "Getting error rates for the correction algorithm..."
 		python getErrorRates.py reformat.fasta error.fasta OUTPUT $description >> $output_file 2>> $format_output_file
 		rm reformat.fasta error.fasta OUTPUT
 	done
 	rm chosen_alignments.fasta
 done
 
-unix2dos $format_output_file
+unix2dos $format_output_file 2> /dev/null
 
 # Generates graph based on output data
 ./calculateErrorRates.sh $output_file $repititions
