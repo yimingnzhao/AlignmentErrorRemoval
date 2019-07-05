@@ -2,8 +2,8 @@
 
 opts=":hn:a:e:k:r:"	
 
-USAGE="./generateGraph_Custom.sh [-n number of alignments to choose] [-a number of erroneous alignments] [-e length of error] [-k value of K] [-r number of repititions] [-h] fasta_file"
-DESCRIPTION="Generates data and graph for testing the AlignmentErrorRemoval algorithm\n\n\tPositional Parameters:\n\t\tfasta_file:\tThe path to the fasta file to be tested\n\n\tOptional Parameters:\n\t\t-n\t\tThe total number of alignments to choose from the fasta_file\n\t\t-a\t\tThe number of alignments to insert errors\n\t\t-e\t\tThe length of an error\n\t\t-k\t\tThe value of K\n\t\t-r\t\tThe number of repititions to run\n\t\t-h\t\tPrints the usage statement and exits"
+USAGE="./generateData_Custom.sh [-n number of alignments to choose] [-a number of erroneous alignments] [-e length of error] [-k value of K] [-r number of repititions] [-h] fasta_file"
+DESCRIPTION="Generates data for testing the AlignmentErrorRemoval algorithm\n\n\tPositional Parameters:\n\t\tfasta_file:\tThe path to the fasta file to be tested\n\n\tOptional Parameters:\n\t\t-n\t\tThe total number of alignments to choose from the fasta_file\n\t\t-a\t\tThe number of alignments to insert errors\n\t\t-e\t\tThe length of an error\n\t\t-k\t\tThe value of K\n\t\t-r\t\tThe number of repititions to run\n\t\t-h\t\tPrints the usage statement and exits"
 
 # Default values of options
 num_alignments_to_choose=200;
