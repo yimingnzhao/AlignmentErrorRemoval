@@ -199,6 +199,9 @@ with open( reformat_file, "r" ) as file_object:
 sys.stderr.write("Number of Alignments: " + str(num_alignments) + "\n");
 sys.stderr.write("Chars in Alignment: " + str(chars_in_alignment) + "\n");
 
+if ( num_alignments < num_erroneous_alignments ):
+    num_erroneous_alignments = num_alignments;
+
 # Creates file with alignment sequence errors
 f = open( reformat_file, "r" );
 error_f = open( error_file, "a" );
