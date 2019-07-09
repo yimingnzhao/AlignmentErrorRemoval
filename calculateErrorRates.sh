@@ -1,9 +1,9 @@
 #!/bin/bash
 
-USAGE="./calculateErrorRates [data file] [number of repetitions per test]"
+USAGE="./calculateErrorRates [data file] [number of repetitions per test] (labels)"
 
 # Checks for command line arguments
-if [ "$#" -ne 2 ]; then
+if [ "$#" -ne 2 ] && [ "$#" -ne 3 ]; then
 	echo $#
 	echo -e "\tError: Invalid number of arguments"
 	echo -e "\tUSAGE: $USAGE"
@@ -61,10 +61,10 @@ done
 
 # Calculates error rates
 echo "Calculating error rates..."
-FPR_arr=(0)
-TPR_arr=(0)
-recall_arr=(0)
-precision_arr=(0)
+FPR_arr=()
+TPR_arr=()
+recall_arr=()
+precision_arr=()
 for ((i=0; i<${#fp_results[@]}; i++ )); do
 	FP=`echo -e "try:\n\tprint( (${fp_results[$i]}) / (${fp_results[$i]} + ${tn_results[$i]}) )\nexcept ZeroDivisionError:\n\tprint(0)" | python`
 	TP=`echo -e "try:\n\tprint( (${tp_results[$i]}) / (${tp_results[$i]} + ${fn_results[$i]}) )\nexcept ZeroDivisionError:\n\tprint(0)" | python`
@@ -76,10 +76,6 @@ for ((i=0; i<${#fp_results[@]}; i++ )); do
 	precision_arr+=($precision)
 done
 
-FPR_arr+=(1)
-TPR_arr+=(1)
-recall_arr+=(1)
-precision_arr+=(1)
 
 FPR_str=""
 TPR_str=""
@@ -108,4 +104,8 @@ echo "TPR: $TPR_str"
 echo "Recall: $recall_str"
 echo "Precision: $precision_str"
 
-python plotROC.py "$precision_str" "$recall_str"
+if [ "$#" -eq 3 ]; then
+	python plotROC.py "$precision_str" "$recall_str" "$3" 
+else
+	python plotROC.py "$precision_str" "$recall_str" 
+fi
