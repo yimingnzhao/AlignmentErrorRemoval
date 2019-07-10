@@ -71,7 +71,22 @@ if not isInt(sys.argv[2]):
     print("\tUSAGE: " + USAGE);
     sys.exit();
 
+print("Getting random alignments...", flush=True )
 file_size = getAlignmentsInFile(sys.argv[1]);
+
+
+# if alignments to choose > alignments in file, then all alignments are chosen
+if file_size < int(sys.argv[2]):
+    f = open( sys.argv[1], "r" )
+    result_f = open( "chosen_alignments.fasta", "a" )
+    line = f.readline()
+    while line:
+        result_f.write(line)
+        line = f.readline()
+    f.close()
+    result_f.close()
+    sys.exit()
+
 indices = getRandomAlignmentIndices( int(sys.argv[2]), file_size );
 f = open( sys.argv[1], "r" );
 result_f = open( "chosen_alignments.fasta", "a" );

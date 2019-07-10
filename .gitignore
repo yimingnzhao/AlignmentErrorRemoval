@@ -7,6 +7,7 @@ deps/deps.jl
 50000
 TarDatasets
 OutputFiles
+ChosenAlignments*
 reformat.fasta
 error.fasta
 OUTPUT
