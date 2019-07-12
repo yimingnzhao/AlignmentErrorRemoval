@@ -1,14 +1,18 @@
 #!/bin/bash
 
-USAGE="./calculateErrorRates [data file] [number of repetitions per test] (labels)"
+USAGE="./calculateErrorRates [data file] [number of repetitions per test] (title) (format file) (format file query) (labels)"
 
 # Checks for command line arguments
-if [ "$#" -ne 2 ] && [ "$#" -ne 3 ]; then
-	echo $#
+if [ "$#" -lt 2 ] || [ "$#" -gt 6 ] || [ "$#" -eq 4 ]; then
+	echo 
 	echo -e "\tError: Invalid number of arguments"
 	echo -e "\tUSAGE: $USAGE"
 	exit 1
 fi
+
+repititions="$2"
+format_file="$4"
+format_file_query="$5"
 
 # Gets the error rate values from the input file
 echo "Getting error rate values from the input file..."
@@ -83,29 +87,42 @@ recall_str=""
 precision_str=""
 
 for i in ${FPR_arr[@]}; do
-	FPR_str="$FPR_str $i"
+	FPR_str="$FPR_str#$i"
 done
 
 for i in ${TPR_arr[@]}; do
-	TPR_str="$TPR_str $i"
+	TPR_str="$TPR_str#$i"
 done
 
 for i in ${recall_arr[@]}; do
-	recall_str="$recall_str $i"
+	recall_str="$recall_str#$i"
 done
 
 for i in ${precision_arr[@]}; do
-	precision_str="$precision_str $i"
+	precision_str="$precision_str#$i"
 done
+
+
+color_map=""
+if [ "$#" -ge 5 ]; then
+	color_map=`python getDataFromFormat.py "$format_file" "$format_file_query" "$repititions"`
+fi
 
 
 echo "FPR: $FPR_str"
 echo "TPR: $TPR_str"
 echo "Recall: $recall_str"
 echo "Precision: $precision_str"
+echo "Color Map: $color_map"
 
 if [ "$#" -eq 3 ]; then
 	python plotROC.py "$precision_str" "$recall_str" "$3" 
+elif [ "$#" -eq 6 ]; then
+	python plotROC.py "$precision_str" "$recall_str" "$3" "$color_map" "$6"
+elif [ "$#" -eq 5 ]; then
+	python plotROC.py "$precision_str" "$recall_str" "$3" "$color_map"
 else
-	python plotROC.py "$precision_str" "$recall_str" 
+	python plotROC.py "$precision_str" "$recall_str"
 fi
+	
+

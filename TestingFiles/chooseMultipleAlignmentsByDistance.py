@@ -138,7 +138,7 @@ while i >= 0 and i >= len(sorted_trees) - 10:
     subtree_diameter = round(float(subtree_diameter), 6);
     max_pairwise_distance = round(float(max_pairwise_distance), 6);
     mean_pairwise_distance = round(float(float(mean_pairwise_distance)/subtree_leaves), 6);
-    file_label = "repitition" + str(len(sorted_trees)-1-i) + "_diameter" + str(subtree_diameter) + "_meanPairDist" + str(mean_pairwise_distance) + "_leaves" + str(subtree_leaves);
+    file_label = "repitition" + str(len(sorted_trees)-1-i) + "_diameter" + str(subtree_diameter) + "_meanPairDist" + str(mean_pairwise_distance) + "_leaves" + str(len(leaf_set));
     generateAlignmentFile( leaf_set_labels, align_file, file_label )
     i = i - 1
 
