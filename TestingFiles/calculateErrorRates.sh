@@ -1,6 +1,6 @@
 #!/bin/bash
 
-USAGE="./calculateErrorRates [data file] [number of repetitions per test] (title) (format file) (format file query) (labels)"
+USAGE="./calculateErrorRates [data file] [number of repetitions per test] (title) (format file) (format file query) (markers)"
 
 # Checks for command line arguments
 if [ "$#" -lt 2 ] || [ "$#" -gt 6 ] || [ "$#" -eq 4 ]; then

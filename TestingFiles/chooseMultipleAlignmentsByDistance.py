@@ -79,6 +79,7 @@ max_diameter = float(sys.argv[4])
 
 print("Traversing through the tree to find subtrees of the right diameters...", flush=True)
 tree = treeswift.read_tree_newick(newick_file)
+print("Total Tree Diamter: " + str(tree.diameter()), flush=True)
 trees = []
 num_nodes_in_tree = []
 max_alignments = 0

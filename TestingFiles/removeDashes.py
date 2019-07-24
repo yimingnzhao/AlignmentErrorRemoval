@@ -8,8 +8,8 @@ f = open( fasta_file, "r" );
 lines = f.readlines()
 
 all_dash_columns = []
-print(len(lines))
-print(len(lines[1]))
+print("Number of sequences: " +  str(len(lines)/2)) 
+print("Chars in sequence: " + str(len(lines[1])))
 
 
 for i in range(len(lines[1])):
@@ -22,8 +22,9 @@ for i in range(len(lines[1])):
         all_dash_columns.append(i)
 
 
-print(all_dash_columns)
 f.close()
+
+print("Columns removed: " + str(len(all_dash_columns)))
 
 f = open("removed_dash_output", "a");
 for line in lines:
@@ -34,7 +35,5 @@ for line in lines:
     for column in reversed(all_dash_columns):
         string = string[:column] + string[column+1:];
     f.write(string)
-
-
 
 f.close();

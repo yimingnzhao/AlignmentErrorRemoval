@@ -13,5 +13,8 @@ reformat.fasta
 error.fasta
 OUTPUT
 DATA_OUTPUT
+DATA*
+FORMAT*
+diameter.out
 generatedFiles*
 RNASim_OUTPUT
