@@ -15,6 +15,7 @@ OUTPUT
 DATA_OUTPUT
 DATA*
 FORMAT*
+GRAPH_errlen
 diameter.out
 generatedFiles*
 RNASim_OUTPUT
