@@ -92,6 +92,8 @@ for i in range(len(FPR_arr)):
 
 
 for i in range(len(color_map)):
+    if len(color_map[i]) > 6:
+        color_map[i] = color_map[i][0:6]
     color_map[i] = float(color_map[i]);
 
 plotROC( FPR_arr, TPR_arr, title, num_points, color_map )

@@ -96,17 +96,22 @@ Args:
     divisor (int): the amount to split the sequence
     min_char (int): the character to intially start the error sequence
     repitition (int): the iteration of running this method per sequence
+    error_file (file): the file to write to (used in error cases)
+    file_name (string): the name of the error file
 
 Return:
     int: the last possible index of the sequence to begin the error sequence of a given length
 """
-def getLastCharInRange( sequence, length, divisor, min_char, repitition ):
+def getLastCharInRange( sequence, length, divisor, min_char, repitition, error_file, file_name ):
     char_count = 0;
     current_index = int((len(sequence) - 2) / divisor) * repitition;
     while char_count < length:
         # Checks if current_index has become negative and exits program if true
         if current_index < min_char:
             print("Error: Cannot generate error sequence as error length is greater than the valid sequence length" );
+            # Closes the error file, and clears its contents
+            error_file.close();
+            open( file_name, "w" ).close();
             sys.exit();
         current_char = sequence[current_index];
         # Only increments char_count if the char is not a gap
@@ -127,19 +132,19 @@ Args:
     length (int): the number of characters to modify
     num_error_areas(int): the number of erroneous areas
     data (list): list of possible data characters
+    error_file (file): the file to write to (used in error cases)
+    file_name (string): the name of the error file
 
 Return:
     str: modified sequence with errors
 """
-def setErrSequence( sequence, length, num_error_areas, data ):
-    max_pos = getLastCharInRange( sequence, length, num_error_areas, 0, 1 );
+def setErrSequence( sequence, length, num_error_areas, data, error_file, file_name ):
+    max_pos = getLastCharInRange( sequence, length, num_error_areas, 0, 1, error_file, file_name );
     min_pos = 0;
 
-    print(num_error_areas)
 
 
     for i in range(num_error_areas):
-        print(str(min_pos) + " " + str(max_pos))
         current_pos = random.randint( min_pos, max_pos );
         count = 0;
         while count < length:
@@ -150,7 +155,7 @@ def setErrSequence( sequence, length, num_error_areas, data ):
             current_pos += 1;
         if not i == num_error_areas - 1:
             min_pos = max_pos;
-            max_pos = getLastCharInRange( sequence, length, num_error_areas, current_pos, i + 2 );
+            max_pos = getLastCharInRange( sequence, length, num_error_areas, current_pos, i + 2, error_file, file_name);
     return sequence;
 
 
@@ -209,7 +214,6 @@ reformat_file = "reformat.fasta";
 error_file= "error.fasta";
 
 
-print(num_error_areas)
 
 
 # Creates a reformated file
@@ -247,7 +251,7 @@ with open( reformat_file, "r" ) as file_object:
             count += 1;
             continue;
         if len(sequence_errs) > 0 and sequence_errs[-1] == count:
-            error_f.write( setErrSequence( line, sequence_error_len, num_error_areas, data_type ) );
+            error_f.write( setErrSequence( line, sequence_error_len, num_error_areas, data_type, error_f, error_file ) );
             sequence_errs.pop();
         else:
             error_f.write( line );

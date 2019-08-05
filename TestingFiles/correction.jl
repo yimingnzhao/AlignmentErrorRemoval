@@ -80,6 +80,11 @@ function correction(fin, fout, k, X, MASK, pvalue, pseudocount, verbose)
 		tiebreaker = zeros(L, 2)
 		bt = zeros(Int64, L, 2)
 		cutoff = max(wCutoff[j], cutoffFloor, 1)
+
+		print( stderr, cutoff )
+		print( stderr, "\n" )
+		
+
 		for i in 1:L
 			v = (wj[i] > cutoff ? 0 : 1)
 			if i == 1

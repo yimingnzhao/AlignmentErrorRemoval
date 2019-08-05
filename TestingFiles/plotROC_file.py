@@ -22,7 +22,7 @@ def plotROC( fpr, tpr, title, num_points, color_map ):
             i = 0
             while i < len(fpr):
                 for j in range(num_points):
-                    plt.scatter([fpr[i]], [tpr[i]], c = [color_map[i]], vmin = vmin, vmax = vmax, cmap = 'viridis', marker=markers[j], s = 15)
+                    plt.scatter([fpr[i]], [tpr[i]], c = [color_map[i]], vmin = vmin, vmax = vmax, cmap = 'viridis', marker=markers[j], s = 17)
                     i += 1
                     if i == len(fpr):
                         break
