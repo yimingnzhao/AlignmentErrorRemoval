@@ -37,18 +37,16 @@ def getLineErrorRates( correct, error, output ):
         output_char = output[x];
         error_char = error[x];
         correct_char = correct[x];
-        if output_char == '-':
-            continue
         if output_char == 'X':
-            if correct_char == 'N':
-                tp = tp + 1;
-            else:
+            if error_char == correct_char:
                 fp = fp + 1;
-        else:
-            if correct_char == 'N':
-                fn = fn + 1;
             else:
+                tp = tp + 1;
+        else:
+            if output_char == correct_char:
                 tn = tn + 1;
+            else:
+                fn = fn + 1;
     return (fp, fn, tp, tn);
         
 
@@ -93,7 +91,7 @@ while correct_line and error_line and output_line:
     output_line = output_f.readline();
     error_line = error_f.readline();
 if correct_line or error_line or output_line:
-    print("Error: Not all files have the same number of lines: " + description);
+    print("Error: Not all files have the same number of lines");
 correct_f.close();
 error_f.close();
 output_f.close();

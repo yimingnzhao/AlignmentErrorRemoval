@@ -49,19 +49,18 @@ function correction(fin, fout, k, X, MASK, pvalue, pseudocount, verbose)
 	wsum = [accumulate(+, arr) for arr in wsorted]
 	f(x, y, n, m) = x^2 / n + (n == m ? 0 : (y - x)^2 / (m - n))
 	var = [length(arr) > 0 ? f.(arr, arr[end], 1:length(arr), length(arr)) : [] for arr in wsum]
-	cutoffFloor = min([(i > (1 - pvalue) * length(var[j]) ? wsorted[j][i] : 3) for j in 1:m if length(var[j]) > 0 for i in [findmax(var[j])[2]]]...)
+	cutoffFloor = min([(i > (pvalue) * length(var[j]) ? wsorted[j][i] : 3) for j in 1:m if length(var[j]) > 0 for i in [findmax(var[j])[2]]]...)
 	
-	print( stderr, cutoffFloor)
-	print( stderr, "\n" )
-	cutoffFloor = max(cutoffFloor, 1 + pseudocount * 5 / 12)
-	wCutoff = [length(var[j]) > 0 ? wsorted[j][findmax(var[j])[2]] : 0 for j in 1:m]
+
+	wCutoff = Float64[]
+	for j in 1:m
+		fmax = findmax(var[j])
+		push!(wCutoff, ( fmax[2] > (pvalue) * length(var[j]) ) ? wsorted[j][fmax[2]] : 0 )
+	end
+
 	s = zeros(n - k + 1, m, 2)
 	tiebreaker = zeros(n - k + 1, m, 2)
 	bt = zeros(Int64, n - k + 1, m, 2)
-
-
-	print( stderr, cutoffFloor )
-
 	for j in 1:m
 		wj = w[j]
 		wsj = ws[j]
@@ -75,70 +74,81 @@ function correction(fin, fout, k, X, MASK, pvalue, pseudocount, verbose)
 			println(fout, c[j])
 			continue
 		end
-		s = zeros(L, 2)
-		tiebreaker = zeros(L, 2)
+		s = zeros(L)
 		bt = zeros(Int64, L, 2)
 		cutoff = max(wCutoff[j], cutoffFloor, 1)
-
-		if cutoff - 1 != 0.0
-			print( stderr, cutoff )
-			print( stderr, "\n" )
+		for i in 1:L
+			v = (wj[i] > cutoff ? 1 : 0)
+			s[i] = v
 		end
 
 		for i in 1:L
-			v = (wj[i] > cutoff ? 0 : 1)
-			if i == 1
-				s[i, 1] = v
-				s[i, 2] = 1 - v
-				tiebreaker[i, 1] = 0
-				tiebreaker[i, 2] = wsj[i]
-			else
-				s[i, 1] = s[i - 1, 1] + v
-				s[i, 2] = s[i - 1, 2] + 1 - v
-				tiebreaker[i, 1] = tiebreaker[i - 1, 1]
-				tiebreaker[i, 2] = tiebreaker[i - 1, 2] + wsj[i]
-				bt[i, 1] = 1
-				bt[i, 2] = 2
+			
+			left_ones = 0
+			left_zeros = 0
+			right_ones = 0
+			right_zeros = 0
+			
+			ind = i
+			ind_k = k
+			while ind_k > 0
+				if ind == 0 || ind == k 
+					break
+				end
+				if s[ind] == 1
+					left_ones += ind_k
+				else
+					left_zeros += ind_k
+				end
+
+				ind -= 1
+				ind_k -= 1
 			end
-			if i > k && (s[i, 1], tiebreaker[i, 1]) < (s[i - k, 2] + v, tiebreaker[i - k, 2])
-				s[i, 1] = s[i - k, 2] + v
-				tiebreaker[i, 1] = tiebreaker[i - k, 2]
-				bt[i, 1] = 2
+			
+			ind = i
+			ind_k = k
+			while ind_k > 0
+				if ind == L + 1 || ind == k
+					break
+				end
+				if s[ind] == 1
+					right_ones += ind_k
+				else
+					right_zeros += ind_k
+				end
+
+				ind += 1
+				ind_k -= 1
 			end
-			if i > k && (s[i, 2], tiebreaker[i, 2]) < (s[i - k, 1] + 1 - v, tiebreaker[i - k, 1])
-				s[i, 2] = s[i - k, 1] + 1 - v
-				tiebreaker[i, 2] = tiebreaker[i - k, 1] + wsj[i]
-				bt[i, 2] = 1
-			end
+		
+			bt[i, 1] = (left_zeros >= left_ones) ? 0 : 1
+			bt[i, 2] = (right_zeros >= right_ones) ? 0 : 1
+			
 		end
+
 		str = arrc[j][(arrc[j] .!= '-') .& (arrc[j] .!= X)]
 		icur = L
-		if s[L, 1] < s[L, 2]
+		if s[L] == 1
 			str[L:L+k-1] .= MASK
-			bcur = 2
-		else
-			bcur = 1
 		end
-		while true
-			if bcur == 1 && bt[icur, bcur] == 1
+		while icur > 0
+
+			if s[icur] == 0 && bt[icur, 1] == 0 && bt[icur, 2] == 0
 				icur -= 1
-				bcur = 1
-			elseif bcur == 1 && bt[icur, bcur] == 2
-				icur -= k
-				bcur = 2
-				str[icur : icur + k - 1] .= MASK
-			elseif bcur == 2 && bt[icur, bcur] == 1
-				icur -= k
-				bcur = 1
-			elseif bcur == 2 && bt[icur, bcur] == 2
-				icur -= 1
-				bcur = 2
+			elseif s[icur] == 1 && bt[icur, 1] == 1 && bt[icur, 2] == 1
 				str[icur] = MASK
-			elseif bcur == 1
-				break
-			else
-				str[1:icur - 1] .= MASK
-				break
+				icur -= 1
+			elseif s[icur] == 0 && bt[icur, 1] == 1 && bt[icur, 2] == 1
+				str[icur] = MASK
+				icur -= 1
+			elseif s[icur] == 1 && bt[icur, 1] == 0 && bt[icur, 2] == 0
+				icur -= 1
+			elseif s[icur] == 1
+				str[icur] = MASK
+				icur -= 1
+			elseif s[icur] == 0 
+				str[icur] = MASK
+				icur -= 1
 			end
 		end
 		println(fout, ">" * header[j])

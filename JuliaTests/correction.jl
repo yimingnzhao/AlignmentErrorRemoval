@@ -49,7 +49,7 @@ function correction(fin, fout, k, X, MASK, pvalue, pseudocount, verbose)
 	wsum = [accumulate(+, arr) for arr in wsorted]
 	f(x, y, n, m) = x^2 / n + (n == m ? 0 : (y - x)^2 / (m - n))
 	var = [length(arr) > 0 ? f.(arr, arr[end], 1:length(arr), length(arr)) : [] for arr in wsum]
-	cutoffFloor = min([(i > (1 - pvalue) * length(var[j]) ? wsorted[j][i] : 3) for j in 1:m if length(var[j]) > 0 for i in [findmax(var[j])[2]]]...)
+	cutoffFloor = min([(i > (pvalue) * length(var[j]) ? wsorted[j][i] : 3) for j in 1:m if length(var[j]) > 0 for i in [findmax(var[j])[2]]]...)
 	cutoffFloor = max(cutoffFloor, 1 + pseudocount * 5 / 12)
 	wCutoff = [length(var[j]) > 0 ? wsorted[j][findmax(var[j])[2]] : 0 for j in 1:m]
 	s = zeros(n - k + 1, m, 2)
@@ -72,6 +72,7 @@ function correction(fin, fout, k, X, MASK, pvalue, pseudocount, verbose)
 		tiebreaker = zeros(L, 2)
 		bt = zeros(Int64, L, 2)
 		cutoff = max(wCutoff[j], cutoffFloor, 1)
+		println(stderr, cutoff)
 		for i in 1:L
 			v = (wj[i] > cutoff ? 0 : 1)
 			if i == 1
@@ -98,6 +99,7 @@ function correction(fin, fout, k, X, MASK, pvalue, pseudocount, verbose)
 				bt[i, 2] = 1
 			end
 		end
+
 		str = arrc[j][(arrc[j] .!= '-') .& (arrc[j] .!= X)]
 		icur = L
 		if s[L, 1] < s[L, 2]

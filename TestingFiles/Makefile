@@ -4,7 +4,7 @@ clean:
 
 
 julia:
-	julia correction.jl -k 11 -n -m X -a N error.fasta > OUTPUT
+	julia test.jl -k 11 -n -m X -a N error.fasta > OUTPUT
 
 
 error:

@@ -2,8 +2,7 @@ import random
 import sys
 import os
 
-RNA_DATA = ["A", "U", "G", "C"];
-DNA_DATA = ["A", "T", "G", "C"];
+RNA_DATA = ["A", "T", "G", "C"];
 
 
 """
@@ -123,24 +122,20 @@ Uniformly chooses the start position of error under the following conditions:
 Args:
     sequence (str): the sequence to modify
     length (int): the number of characters to modify
-    data (list): list of characters
 
 Return:
-    tuple: (modified sequence with errors chars, modified sequence with error positions)
+    str: modified sequence with errors
 """
-def setErrSequence( sequence, length, data ):
+def setErrSequence( sequence, length ):
     current_pos = random.randint( 0, getLastCharInRange(sequence, length) );
     count = 0;
-    err_sequence = sequence
-    pos_sequence = sequence
     while count < length:
         if not sequence[current_pos] == "-":
             count += 1;
-            rand_segment = data[ random.randint( 0, len( data ) - 1 ) ];
-            err_sequence = err_sequence[0:current_pos] + rand_segment + err_sequence[(current_pos + 1):];
-            pos_sequence = pos_sequence[0:current_pos] + "N" + err_sequence[(current_pos + 1):];
+            rand_segment = RNA_DATA[ random.randint( 0, len( RNA_DATA ) - 1 ) ];
+            sequence = sequence[0:current_pos] + rand_segment + sequence[(current_pos + 1):];
         current_pos += 1;
-    return (err_sequence, pos_sequence);
+    return sequence;
 
 
 """
@@ -164,8 +159,8 @@ def addNewlineToEOF( path ):
 
 
 # The dataset file
-USAGE = "python generateErrorModel.py [data file] [num of erroneous alignments] [length of sequence error] [data type]"
-if not len(sys.argv) == 5:
+USAGE = "python generateErrorModel.py [data file] [num of erroneous alignments] [length of sequence error]"
+if not len(sys.argv) == 4:
     print();
     print("\tError: Incorrect number of parameters");
     print("\tUSAGE: " + USAGE );
@@ -173,11 +168,6 @@ if not len(sys.argv) == 5:
 data_file = sys.argv[1];
 num_erroneous_alignments = sys.argv[2];
 sequence_error_len = sys.argv[3];
-data_type = sys.argv[4];
-if data_type == "RNA":
-    data_type = RNA_DATA
-else:
-    data_type = DNA_DATA
 if not isInt( num_erroneous_alignments ):
     print();
     print("\tError: Invalid parameter for [num of errneous alignments]");
@@ -192,7 +182,6 @@ num_erroneous_alignments = int(num_erroneous_alignments);
 sequence_error_len = int(sequence_error_len);
 reformat_file = "reformat.fasta";
 error_file= "error.fasta";
-err_pos_file = "position.fasta"
 
 # Creates a reformated file
 reformatFile( data_file, reformat_file );
@@ -216,27 +205,20 @@ if ( num_alignments < num_erroneous_alignments ):
 # Creates file with alignment sequence errors
 f = open( reformat_file, "r" );
 error_f = open( error_file, "a" );
-pos_f = open( err_pos_file, "a" )
 sequence_errs = getErrSequences( num_erroneous_alignments, num_alignments );
 count = 0;
 with open( reformat_file, "r" ) as file_object:
     for line in file_object:
         if isBeginAlignment( line ):
             error_f.write(line);
-            pos_f.write(line)
             count += 1;
             continue;
         if len(sequence_errs) > 0 and sequence_errs[-1] == count:
-            sequence = setErrSequence( line, sequence_error_len, data_type );
-            error_f.write( sequence[0] );
-            pos_f.write( sequence[1] )
+            error_f.write( setErrSequence( line, sequence_error_len ) );
             sequence_errs.pop();
         else:
             error_f.write( line );
-            pos_f.write( line );
 f.close();
 error_f.close();
-pos_f.close();
 addNewlineToEOF(reformat_file);
 addNewlineToEOF(error_file);
-addNewlineToEOF(err_pos_file);
