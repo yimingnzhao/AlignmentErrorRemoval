@@ -34,7 +34,7 @@ for count in range(len(t)):
 
 t = "".join(t)
 
-q = open("FoRMAT_REPLACE_N", "w")
+q = open("FORMAT_REPLACE_N", "w")
 q.write(t)
 q.close()
 

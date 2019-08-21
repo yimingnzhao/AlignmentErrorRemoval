@@ -37,14 +37,14 @@ for file in $1/*; do
 		for (( j=0; j<$repititions; j++ )); do
 			description="$aln_file\tvalue_of_k:$value_of_k\trepitition:$j"
 			len_of_err=`awk -v k=$value_of_k -v mult=$err_len_multiplier 'BEGIN { printf("%.0f", k * mult); }'`
-			echo "Generating error model for the error length multiplier $err_len_multiplier, repitition $j..."
+			echo "Generating error model, repitition $j..."
 			num_alignments=$((`wc -l < chosen_alignments.fasta` / 2))
-			python generateErrorModel.py chosen_alignments.fasta $(($num_alignments / $num_err_aln_divisor)) $len_of_err
+			python generateErrorModel.py chosen_alignments.fasta $(($num_alignments / $num_err_aln_divisor)) $len_of_err DNA
 			echo "Running the correction algorithm..."
 			julia correction.jl -k $value_of_k -m X -a N error.fasta > OUTPUT 2> /dev/null
 			echo "Getting error rates for the correction algorithm..."
-			python getErrorRates.py reformat.fasta error.fasta OUTPUT $description >> $output_file 2>> $format_output_file
-			rm reformat.fasta error.fasta OUTPUT
+			python getErrorRates.py position.fasta error.fasta OUTPUT $description >> $output_file 2>> $format_output_file
+			rm reformat.fasta error.fasta position.fasta OUTPUT
 		done
 		rm chosen_alignments.fasta
 	done

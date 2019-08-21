@@ -30,7 +30,7 @@ def plotROC( fpr, tpr, title, num_points, color_map ):
             plt.scatter(fpr, tpr, c=color_map, cmap='viridis')
     else:
         plt.scatter(fpr, tpr, color='blue');
-    plt.plot([0,1], [0,1], color='black', linestyle='--')
+    #plt.plot([0,1], [0,1], color='black', linestyle='--')
     plt.xticks(np.arange(0, 1.2, 0.2))
     plt.yticks(np.arange(0, 1.2, 0.2))
     plt.colorbar()

@@ -50,9 +50,11 @@ function correction(fin, fout, k, X, MASK, pvalue, pseudocount, verbose)
 	f(x, y, n, m) = x^2 / n + (n == m ? 0 : (y - x)^2 / (m - n))
 	var = [length(arr) > 0 ? f.(arr, arr[end], 1:length(arr), length(arr)) : [] for arr in wsum]
 	cutoffFloor = min([(i > (1 - pvalue) * length(var[j]) ? wsorted[j][i] : 3) for j in 1:m if length(var[j]) > 0 for i in [findmax(var[j])[2]]]...)
-	
+
+	print( stderr, "Cutoff Floor: " )
 	print( stderr, cutoffFloor)
 	print( stderr, "\n" )
+
 	cutoffFloor = max(cutoffFloor, 1 + pseudocount * 5 / 12)
 	wCutoff = [length(var[j]) > 0 ? wsorted[j][findmax(var[j])[2]] : 0 for j in 1:m]
 	s = zeros(n - k + 1, m, 2)
@@ -60,7 +62,8 @@ function correction(fin, fout, k, X, MASK, pvalue, pseudocount, verbose)
 	bt = zeros(Int64, n - k + 1, m, 2)
 
 
-	print( stderr, cutoffFloor )
+	print( stderr, "Final Cutoff Floor: " )
+	println( stderr, cutoffFloor )
 
 	for j in 1:m
 		wj = w[j]

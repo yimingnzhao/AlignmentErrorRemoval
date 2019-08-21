@@ -37,12 +37,12 @@ for file in $1/*; do
 		for (( j=0; j<$repititions; j++ )); do
 			description="$aln_file\terroneous_alignments_num_divisor:$num_err_aln_divisor\trepitition:$j"
 			echo "Generating error model for the number of error alignments divisor $num_err_aln_divisor, repitition $j..."
-			python generateErrorModel.py chosen_alignments.fasta $(($num_alignments / $num_err_aln_divisor)) $(($value_of_k * $len_of_err_multiplier))
+			python generateErrorModel.py chosen_alignments.fasta $(($num_alignments / $num_err_aln_divisor)) $(($value_of_k * $len_of_err_multiplier)) DNA
 			echo "Running the correction algorithm..."
 			julia correction.jl -k $value_of_k -m X -a N error.fasta > OUTPUT 2> /dev/null
 			echo "Getting error rates for the correction algorithm..."
-			python getErrorRates.py reformat.fasta error.fasta OUTPUT $description >> $output_file 2>> $format_output_file
-			rm reformat.fasta error.fasta OUTPUT
+			python getErrorRates.py position.fasta error.fasta OUTPUT $description >> $output_file 2>> $format_output_file
+			rm reformat.fasta error.fasta position.fasta OUTPUT
 		done
 	done
 	rm chosen_alignments.fasta

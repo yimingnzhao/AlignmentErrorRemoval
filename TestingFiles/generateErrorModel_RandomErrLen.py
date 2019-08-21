@@ -113,6 +113,7 @@ def getLastCharInRange( sequence, length ):
     return current_index + 1;
 
 
+
 """
 Uniformly chooses the start position of error under the following conditions:
     - given a set length of the error
@@ -122,21 +123,25 @@ Uniformly chooses the start position of error under the following conditions:
 Args:
     sequence (str): the sequence to modify
     length (int): the number of characters to modify
-    data( list): list of possible data characters
+    data (list): list of characters
 
 Return:
-    str: modified sequence with errors
+    tuple: (modified sequence with errors chars, modified sequence with error positions)
 """
 def setErrSequence( sequence, length, data ):
     current_pos = random.randint( 0, getLastCharInRange(sequence, length) );
     count = 0;
+    err_sequence = sequence
+    pos_sequence = sequence
     while count < length:
         if not sequence[current_pos] == "-":
             count += 1;
             rand_segment = data[ random.randint( 0, len( data ) - 1 ) ];
-            sequence = sequence[0:current_pos] + rand_segment + sequence[(current_pos + 1):];
+            err_sequence = err_sequence[0:current_pos] + rand_segment + err_sequence[(current_pos + 1):];
+            pos_sequence = pos_sequence[0:current_pos] + "N" + err_sequence[(current_pos + 1):];
         current_pos += 1;
-    return sequence;
+    return (err_sequence, pos_sequence);
+
 
 
 """
@@ -185,7 +190,7 @@ num_erroneous_alignments = int(num_erroneous_alignments);
 k = int(k)
 reformat_file = "reformat.fasta";
 error_file= "error.fasta";
-
+position_file = "position.fasta"
 
 
 
@@ -211,6 +216,7 @@ if ( num_alignments < num_erroneous_alignments ):
 # Creates file with alignment sequence errors
 f = open( reformat_file, "r" );
 error_f = open( error_file, "a" );
+pos_f = open(position_file, "a")
 sequence_errs = getErrSequences( num_erroneous_alignments, num_alignments );
 count = 0;
 if  data_type == "RNA":
@@ -221,15 +227,21 @@ with open( reformat_file, "r" ) as file_object:
     for line in file_object:
         if isBeginAlignment( line ):
             error_f.write(line);
+            pos_f.write(line)
             count += 1;
             continue;
         if len(sequence_errs) > 0 and sequence_errs[-1] == count:
             sequence_error_len = random.randint(2, 64) * k
-            error_f.write( setErrSequence( line, sequence_error_len, data_type ) );
+            sequences = setErrSequence( line, sequence_error_len, data_type )
+            error_f.write( sequences[0] );
+            pos_f.write( sequences[1] );
             sequence_errs.pop();
         else:
             error_f.write( line );
+            pos_f.write(line)
 f.close();
 error_f.close();
+pos_f.close();
 addNewlineToEOF(reformat_file);
 addNewlineToEOF(error_file);
+addNewlineToEOF(position_file);

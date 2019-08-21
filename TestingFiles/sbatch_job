@@ -1,0 +1,33 @@
+#!/bin/bash
+#SBATCH --job-name="generate_trees_by_diameter"
+#SBATCH --output="diameter.out"
+#SBATCH --partition=compute
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=24
+#SBATCH --export=ALL
+#SBATCH -t 14:00:00
+#SBATCH -A uot138
+
+
+module add python/2.7.10
+python -m pip install treeswift-1.1.0-py2.py3-none-any.whl --user
+
+
+#./generateData_ChosenAlignments_K.sh ChosenAlignments_16S.B_diameter0-0.1 5
+#mv DATA_OUTPUT DATA_OUTPUT_diameter0-0.1
+#mv FORMATTED_OUTPUT FORMATTED_OUTPUT_diameter0-0.1
+
+
+./generateData_ChosenAlignments_K.sh ChosenAlignments_16S.B_diameter0.1-0.2 5
+mv DATA_OUTPUT DATA_OUTPUT_diameter0.1-0.2
+mv FORMATTED_OUTPUT FORMATTED_OUTPUT_diameter0.1-0.2
+
+
+./generateData_ChosenAlignments_K.sh ChosenAlignments_16S.B_diameter0.2-0.3 5
+mv DATA_OUTPUT DATA_OUTPUT_diameter0.2-0.3
+mv FORMATTED_OUTPUT FORMATTED_OUTPUT_diameter0.2-0.3
+
+
+./generateData_ChosenAlignments_K.sh ChosenAlignments_16S.B_diameter0.3-0.4 5
+mv DATA_OUTPUT DATA_OUTPUT_diameter0.3-0.4
+mv FORMATTED_OUTPUT FORMATTED_OUTPUT_diameter0.3-0.4
